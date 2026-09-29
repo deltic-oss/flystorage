@@ -20,9 +20,8 @@ import {
     S3Client,
     S3ServiceException,
 } from '@aws-sdk/client-s3';
-import {Configuration, Upload} from '@aws-sdk/lib-storage';
-import {getSignedUrl} from '@aws-sdk/s3-request-presigner';
-import {posix} from 'node:path';
+import { Configuration, Upload } from '@aws-sdk/lib-storage';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
     AdapterListOptions,
     ChecksumIsNotAvailable,
@@ -47,9 +46,10 @@ import {
     Visibility,
     WriteOptions,
 } from '@flystorage/file-storage';
-import {resolveMimeType} from '@flystorage/stream-mime-type';
-import {Readable} from 'stream';
-import {lookup} from 'mime-types';
+import { resolveMimeType } from '@flystorage/stream-mime-type';
+import { lookup } from 'mime-types';
+import { posix } from 'node:path';
+import { Readable } from 'stream';
 
 type PutObjectOptions = Omit<PutObjectCommandInput, 'Bucket' | 'Key' | 'Body'>;
 export type WriteOptionsForS3 = Omit<PutObjectOptions, 'ACL' | 'ContentLength'>;
@@ -498,7 +498,7 @@ export class AwsS3StorageAdapter implements StorageAdapter {
         for await (const {item} of itemsToDelete) {
             bucket.push({Key: item.Key!});
 
-            if (bucket.length > 1000) {
+            if (bucket.length >= 1000) {
                 promises.push(flush(bucket));
                 bucket = [];
             }
